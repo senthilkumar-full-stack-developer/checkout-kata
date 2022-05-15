@@ -2,17 +2,20 @@
 {
     public class Checkout
     {
-        public double CalculateTotalPrice(int numberOfItems, double priceOfItem, int numberOfItemsForPromotions, double discountedValue, bool isDiscountInPercentage)
+        public double CalculateTotalPrice(Dictionary<Item, int> itemList)
         {
-            double totalPrice = numberOfItems * priceOfItem;
+            double totalPrice = 0;
 
-            if (isDiscountInPercentage)
+            foreach (var item in itemList)
             {
-                discountedValue = discountedValue * numberOfItemsForPromotions * priceOfItem;
-            }
+                totalPrice += item.Value * item.Key.Price;
 
-            if (numberOfItemsForPromotions > 0)
-                totalPrice -= (numberOfItems / numberOfItemsForPromotions) * discountedValue;
+                if (item.Key.isDiscountInPercentage)
+                    item.Key.DiscountedValue = item.Key.DiscountedValue * item.Key.NumberOfItemsForPromotions * item.Key.Price;
+
+                if (item.Key.NumberOfItemsForPromotions > 0)
+                    totalPrice -= (item.Value / item.Key.NumberOfItemsForPromotions) * item.Key.DiscountedValue;
+            }
 
             return totalPrice;
         }

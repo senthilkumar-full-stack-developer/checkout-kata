@@ -1,4 +1,5 @@
 using FluentAssertions;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CheckoutKata.Tests
@@ -6,23 +7,24 @@ namespace CheckoutKata.Tests
     public class CalculateTotalPriceTests
     {
         [Theory]
-        [InlineData(1, 15, 3, 5, false, 15)] //B
-        [InlineData(2, 15, 3, 5, false, 30)] //B
-        [InlineData(3, 15, 3, 5, false, 40)] //B
-        [InlineData(4, 15, 3, 5, false, 55)] //B
-        [InlineData(5, 15, 3, 5, false, 70)] //B
-        [InlineData(6, 15, 3, 5, false, 80)] //D
-        [InlineData(1, 55, 2, 0.25, true, 55)] //D
-        [InlineData(2, 55, 2, 0.25, true, 82.5)] //D
-        [InlineData(3, 55, 2, 0.25, true, 137.50)] //D
-        [InlineData(4, 55, 2, 0.25, true, 165)] //D
-        [InlineData(2, 10, 0, 0, false, 20)] //A
-        [InlineData(2, 40, 0, 0, false, 80)] //C
-        public void Checkout_Items_With_B_Items_Promotions_Not_In_Percentage_And_D_Items_Promotions_In_Percentage(int numberOfItems, double priceOfItem, int numberOfItemsForPromotions, double discountedValue, bool isDiscountInPercentage, double expectedTotalPrice)
+        [InlineData(1, 10, 0, 0, false, 1, 15, 3, 5, false, 1, 40, 0, 0, false, 1, 55, 2, 0.25, true, 120)] //No discounts will be applied
+        [InlineData(2, 10, 0, 0, false, 2, 15, 3, 5, false, 2, 40, 0, 0, false, 2, 55, 2, 0.25, true, 212.5)] //Discount will be applied for Item D alone
+        [InlineData(3, 10, 0, 0, false, 3, 15, 3, 5, false, 3, 40, 0, 0, false, 3, 55, 2, 0.25, true, 327.5)] //Discounts will be applied for both Item B and Item D
+        public void When_Collection_Items_For_A_B_C_D_With_Or_Without_Discounts_CheckedOut_Should_Return_Expected_Total_Price(int numberOfAItems, double priceOfAItem, int numberOfAItemsForPromotions, double discountedValueForA, bool isDiscountInPercentageForA,
+                                                                                                                              int numberOfBItems, double priceOfBItem, int numberOfBItemsForPromotions, double discountedValueForB, bool isDiscountInPercentageForB,
+                                                                                                                              int numberOfCItems, double priceOfCItem, int numberOfCItemsForPromotions, double discountedValueForC, bool isDiscountInPercentageForC,
+                                                                                                                              int numberOfDItems, double priceOfDItem, int numberOfDItemsForPromotions, double discountedValueForD, bool isDiscountInPercentageForD,
+                                                                                                                              double expectedTotalPrice)
         {
             var checkOut = new Checkout();
 
-            var calculateTotalPrice = checkOut.CalculateTotalPrice(numberOfItems, priceOfItem, numberOfItemsForPromotions, discountedValue, isDiscountInPercentage);
+            var itemList = new Dictionary<Item, int>();
+            itemList.Add(new Item { Name = "A", Price = priceOfAItem, NumberOfItemsForPromotions = numberOfAItemsForPromotions, DiscountedValue = discountedValueForA, isDiscountInPercentage = isDiscountInPercentageForA }, numberOfAItems);
+            itemList.Add(new Item { Name = "B", Price = priceOfBItem, NumberOfItemsForPromotions = numberOfBItemsForPromotions, DiscountedValue = discountedValueForB, isDiscountInPercentage = isDiscountInPercentageForB }, numberOfBItems);
+            itemList.Add(new Item { Name = "C", Price = priceOfCItem, NumberOfItemsForPromotions = numberOfCItemsForPromotions, DiscountedValue = discountedValueForC, isDiscountInPercentage = isDiscountInPercentageForC }, numberOfCItems);
+            itemList.Add(new Item { Name = "D", Price = priceOfDItem, NumberOfItemsForPromotions = numberOfDItemsForPromotions, DiscountedValue = discountedValueForD, isDiscountInPercentage = isDiscountInPercentageForD }, numberOfDItems);
+
+            var calculateTotalPrice = checkOut.CalculateTotalPrice(itemList);
 
             calculateTotalPrice.Should().Be(expectedTotalPrice);
         }
