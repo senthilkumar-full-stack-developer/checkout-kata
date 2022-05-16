@@ -4,17 +4,30 @@
     {
         public double CalculateTotalPrice(Dictionary<Item, int> itemList)
         {
+            int numberOfItems;
+            double price;
+            double discountedValue;
+            int numberOfItemsForPromotions;
+            bool isDiscountInPercentage;
             double totalPrice = 0;
 
             foreach (var item in itemList)
             {
-                totalPrice += item.Value * item.Key.Price;
+                numberOfItems = item.Value;
+                price = item.Key.Price;
+                discountedValue = item.Key.DiscountedValue;
+                numberOfItemsForPromotions = item.Key.NumberOfItemsForPromotions;
+                isDiscountInPercentage = item.Key.IsDiscountInPercentage;
 
-                if (item.Key.isDiscountInPercentage)
-                    item.Key.DiscountedValue = item.Key.DiscountedValue * item.Key.NumberOfItemsForPromotions * item.Key.Price;
+                totalPrice += numberOfItems * price;
 
-                if (item.Key.NumberOfItemsForPromotions > 0)
-                    totalPrice -= (item.Value / item.Key.NumberOfItemsForPromotions) * item.Key.DiscountedValue;
+                if (isDiscountInPercentage)
+                    discountedValue = (numberOfItemsForPromotions * price) * (discountedValue / 100);
+                else
+                    discountedValue = (numberOfItemsForPromotions * price) - (discountedValue);
+
+                if (numberOfItemsForPromotions > 0)
+                    totalPrice -= (numberOfItems / numberOfItemsForPromotions) * discountedValue;
             }
 
             return totalPrice;
