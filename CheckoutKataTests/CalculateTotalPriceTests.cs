@@ -16,8 +16,6 @@ namespace CheckoutKata.Tests
                                                                                                                               int numberOfDItems, double priceOfDItem, int numberOfDItemsForPromotions, double discountedValueForD, bool isDiscountInPercentageForD,
                                                                                                                               double expectedTotalPrice)
         {
-            var checkOut = new Checkout();
-
             var itemList = new Dictionary<Item, int>
             {
                 { new Item { Name = "A", Price = priceOfAItem, NumberOfItemsForPromotions = numberOfAItemsForPromotions, DiscountedValue = discountedValueForA, IsDiscountInPercentage = isDiscountInPercentageForA }, numberOfAItems },
@@ -26,7 +24,7 @@ namespace CheckoutKata.Tests
                 { new Item { Name = "D", Price = priceOfDItem, NumberOfItemsForPromotions = numberOfDItemsForPromotions, DiscountedValue = discountedValueForD, IsDiscountInPercentage = isDiscountInPercentageForD }, numberOfDItems }
             };
 
-            var calculateTotalPrice = checkOut.CalculateTotalPrice(itemList);
+            var calculateTotalPrice = Checkout.CalculateTotalPrice(itemList);
 
             calculateTotalPrice.Should().Be(expectedTotalPrice);
         }

@@ -2,7 +2,7 @@
 {
     public class Checkout
     {
-        public double CalculateTotalPrice(Dictionary<Item, int> itemList)
+        public static double CalculateTotalPrice(Dictionary<Item, int> itemList)
         {
             int numberOfItems;
             double price;
